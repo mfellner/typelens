@@ -91,7 +91,7 @@ test('map should work with arrays', () => {
   expect(lens.map((x: number) => x + 1)([1, 2, 3])).toEqual([2, 3, 4]);
 });
 
-test.only('view', () => {
+test('view', () => {
   const foo = lens.view(lens.lens(lens.get('x'), lens.set('x')))({ x: 42, y: 33 });
   expect(lens.view(lens.lens(lens.get('x'), lens.set('x')))({ x: 42, y: 33 })).toEqual(42);
 });
