@@ -1,8 +1,5 @@
-export interface Indexable {
-  length?: number;
-  [n: number]: any;
-  [s: string]: any;
-}
+import { ConstFunctor, IdentityFunctor, ValueFunctor } from './functors';
+import { Indexable } from './Indexable';
 
 export type Key = string | number;
 
@@ -93,103 +90,108 @@ export function set(
   }
 }
 
-export interface Functor {
-  map(f: (...args: any[]) => any): Functor;
-}
+// export interface Functor {
+//   map(f: (...args: any[]) => any): Functor;
+// }
 
-export interface Container<T> extends Functor {
-  map(f: (...args: any[]) => any): Container<T>;
-  value(): T;
-}
+// export interface Container<T> extends Functor {
+//   map(f: (...args: any[]) => any): Container<T>;
+//   value(): T;
+// }
 
-function isFunctor(obj: any): obj is Functor {
-  return obj && typeof obj.map === 'function';
-}
+// function isFunctor(obj: any): obj is Functor {
+//   return obj && typeof obj.map === 'function';
+// }
 
-function toContainer<T extends Indexable>(obj: T): Container<T> {
-  if (isFunctor(obj)) {
-    return {
-      map(f: (...args: any[]) => any) {
-        const copy = obj.map(f) as any;
-        return toContainer(copy);
-      },
-      value() {
-        return obj;
-      }
-    };
-  }
-  return {
-    map(f: (...args: any[]) => any) {
-      const copy = shallowCopy(obj);
-      if (typeof copy.length === 'number') {
-        for (let i = 0; i < copy.length; i += 1) {
-          copy[i] = f(copy[i]);
-        }
-      } else {
-        for (const k of Object.keys(copy)) {
-          copy[k] = f(copy[k]);
-        }
-      }
-      return toContainer(copy);
-    },
-    value() {
-      return obj;
-    }
-  };
-}
+// function toContainer<T extends Indexable>(obj: T): Container<T> {
+//   if (isFunctor(obj)) {
+//     return {
+//       map(f: (...args: any[]) => any) {
+//         const copy = obj.map(f) as any;
+//         return toContainer(copy);
+//       },
+//       value() {
+//         return obj;
+//       }
+//     };
+//   }
+//   return {
+//     map(f: (...args: any[]) => any) {
+//       const copy = shallowCopy(obj);
+//       if (typeof copy.length === 'number') {
+//         for (let i = 0; i < copy.length; i += 1) {
+//           copy[i] = f(copy[i]);
+//         }
+//       } else {
+//         for (const k of Object.keys(copy)) {
+//           copy[k] = f(copy[k]);
+//         }
+//       }
+//       return toContainer(copy);
+//     },
+//     value() {
+//       return obj;
+//     }
+//   };
+// }
 
-function mapFn<T>(f: (...args: any[]) => any, obj: Container<T>): Container<T> | undefined {
-  if (typeof obj === 'undefined' || obj === null) {
-    return;
-  }
-  // return obj.map(f).value();
-  // const copy = shallowCopy(obj);
-  // if (typeof copy.length === 'number') {
-  //   for (let i = 0; i < copy.length; i += 1) {
-  //     copy[i] = fn(copy[i]);
-  //   }
-  // } else {
-  //   for (const k of Object.keys(copy)) {
-  //     copy[k] = fn(copy[k]);
-  //   }
-  // }
-  // return copy;
-}
+// function mapFn<T>(f: (...args: any[]) => any, obj: Container<T>): Container<T> | undefined {
+//   if (typeof obj === 'undefined' || obj === null) {
+//     return;
+//   }
+//   // return obj.map(f).value();
+//   // const copy = shallowCopy(obj);
+//   // if (typeof copy.length === 'number') {
+//   //   for (let i = 0; i < copy.length; i += 1) {
+//   //     copy[i] = fn(copy[i]);
+//   //   }
+//   // } else {
+//   //   for (const k of Object.keys(copy)) {
+//   //     copy[k] = fn(copy[k]);
+//   //   }
+//   // }
+//   // return copy;
+// }
 
-export function map<T extends Indexable>(fn: (val: T[keyof T]) => any): (obj: T) => T | undefined {
-  // return (obj: T) => mapFn(fn, obj);
-  return (obj: T) =>
-    toContainer(obj)
-      .map(fn)
-      .value();
-}
+// export function map<T extends Indexable>(fn: (val: T[keyof T]) => any): (obj: T) => T | undefined {
+//   // return (obj: T) => mapFn(fn, obj);
+//   return (obj: T) =>
+//     toContainer(obj)
+//       .map(fn)
+//       .value();
+// }
 
 export type LensFunction<T extends Indexable> = (
-  toFunctor: <X>(x: X) => Container<X>
+  toFunctor: <V>(v: V) => ValueFunctor<V>
 ) => (obj: T) => T;
 
 export function lens<T extends Indexable>(
   getter: ((obj: T) => any | undefined),
   setter: ((val: any) => (obj: T) => any | undefined)
 ): LensFunction<T> {
-  return (toFunctor: <X>(x: X) => Container<X>) => (target: T) =>
+  return (toFunctor: <V>(v: V) => ValueFunctor<V>) => (target: T) =>
     toFunctor(getter(target))
       .map(focus => setter(focus)(target))
       .value();
-  // mapFn(focus => setter(focus)(target), toFunctor(getter(target)));
 }
 
 // <T>(x: T) => Functor<T>
 // const Const = <T>(x: T) => ({
-const Const: <T>(x: T) => Container<T> = x => ({
-  map() {
-    return this;
-  },
-  value() {
-    return x;
-  }
-});
+// const Const: <T>(x: T) => Container<T> = x => ({
+//   map() {
+//     return this;
+//   },
+//   value() {
+//     return x;
+//   }
+// });
 
 export function view<T extends Indexable>(lensFn: LensFunction<T>): (obj: T) => any | undefined {
-  return (obj: T) => lensFn(Const)(obj);
+  return (obj: T) => lensFn(ConstFunctor.of)(obj);
+}
+
+export function over<T extends Indexable>(
+  lensFn: LensFunction<T>
+): (f: ((x: any) => any)) => (obj: T) => any | undefined {
+  return (f: ((x: any) => any)) => (obj: T) => lensFn(y => ConstFunctor.of(f(y)))(obj);
 }

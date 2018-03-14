@@ -83,15 +83,14 @@ test('set path should handle null values', () => {
   expect(lens.set(['x', 'y', 'z'])(42)(null as any)).toBeUndefined();
 });
 
-test('map should work with objects', () => {
-  expect(lens.map((x: number) => x + 1)({ x: 1, y: 2, z: 3 })).toEqual({ x: 2, y: 3, z: 4 });
-});
-
-test('map should work with arrays', () => {
-  expect(lens.map((x: number) => x + 1)([1, 2, 3])).toEqual([2, 3, 4]);
-});
-
 test('view', () => {
-  const foo = lens.view(lens.lens(lens.get('x'), lens.set('x')))({ x: 42, y: 33 });
   expect(lens.view(lens.lens(lens.get('x'), lens.set('x')))({ x: 42, y: 33 })).toEqual(42);
+});
+
+test('over', () => {
+  const g = (_: number) => _ * _;
+  expect(lens.over(lens.lens(lens.get('x'), lens.set('x')))(g)({ x: 2, y: 4 })).toEqual({
+    x: 4,
+    y: 4
+  });
 });
