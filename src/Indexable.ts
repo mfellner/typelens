@@ -4,9 +4,7 @@ export interface Indexable {
   [s: string]: any;
 }
 
-export function isIndexable(x: any): x is Indexable {
-  return x && typeof x === 'object';
-}
+export type Key = string | number;
 
 export function shallowCopy<T extends Indexable>(x: T): T {
   if (Array.isArray(x)) {
