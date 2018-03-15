@@ -40,6 +40,6 @@ describe('set', () => {
   test('path should handle null values', () => {
     expect(set('x')(42)(undefined as any)).toBeUndefined();
     expect(set(['x', 'y', 'z'])(42)(undefined as any)).toBeUndefined();
-    expect(set(['x', 'y', 'z'])(42)(null as any)).toBeUndefined();
+    expect(set(['x', 'y', 'z'])(42)(null as any)).toBeNull();
   });
 });

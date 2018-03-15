@@ -5,6 +5,7 @@ import view from '../src/view';
 
 describe('view', () => {
   test('view', () => {
-    expect(view(lens(get('x'), set('x')))({ x: 42, y: 33 })).toEqual(42);
+    const v: number | undefined = view(lens(get<number>('x'), set('x')))({ x: 42, y: 33 });
+    expect(v).toEqual(42);
   });
 });
