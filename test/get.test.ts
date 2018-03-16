@@ -2,6 +2,7 @@ import get from '../src/get';
 
 describe('get', () => {
   test('should work with objects', () => {
+    const x = get('x')({ x: 42 }).get(_ => _);
     expect(get('x')({ x: 42 })).toEqual(42);
     expect(get('y')({ x: 42 })).toBeUndefined();
   });

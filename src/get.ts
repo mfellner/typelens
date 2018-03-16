@@ -1,32 +1,33 @@
 import { Indexable, Key } from './Indexable';
+import Maybe from './Maybe';
 
-function getKey<T>(key: Key, obj: Indexable): T | undefined {
+function getKey<T>(key: Key, obj: Indexable): Maybe<T> {
   if (typeof obj === 'undefined' || obj === null) {
-    return;
+    return Maybe.new();
   }
-  return obj[key];
+  return Maybe.new(obj[key]);
 }
 
-function getKeyCurry<T>(key: Key): (obj: Indexable) => T | undefined {
+function getKeyCurry<T>(key: Key): (obj: Indexable) => Maybe<T> {
   return (obj: Indexable) => getKey(key, obj);
 }
 
-function getPath<T>(keys: Key[], obj: Indexable): T | undefined {
+function getPath<T>(keys: Key[], obj: Indexable): Maybe<T> {
   let val: any = obj;
   for (const key of keys) {
     if (typeof val === 'undefined' || val === null) {
-      return;
+      return Maybe.new();
     }
     val = val[key];
   }
-  return val;
+  return Maybe.new(val);
 }
 
-function getPathCurry<T>(keys: Array<string | number>): (obj: Indexable) => T | undefined {
+function getPathCurry<T>(keys: Array<string | number>): (obj: Indexable) => Maybe<T> {
   return (obj: Indexable) => getPath(keys, obj);
 }
 
-export default function get<T = any>(arg0: Key | Key[]): (obj: Indexable) => T | undefined {
+export default function get<T = any>(arg0: Key | Key[]): (obj: Indexable) => Maybe<T> {
   if (Array.isArray(arg0)) {
     return getPathCurry(arg0);
   } else {
