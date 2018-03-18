@@ -1,7 +1,11 @@
 import { Comparable, Monad } from './types';
 
 export default abstract class Maybe<A> extends Monad<A> implements Comparable<Maybe<A>> {
-  public static new(x?: any): Maybe<any> {
+  public static is<A>(obj: any): obj is Maybe<A> {
+    return obj instanceof Maybe;
+  }
+
+  public static of(x?: any): Maybe<any> {
     if (typeof x === 'undefined') {
       return nothing;
     } else {
@@ -16,6 +20,8 @@ export default abstract class Maybe<A> extends Monad<A> implements Comparable<Ma
   public abstract chain<B>(f: (a: A) => Maybe<B>): Maybe<B>;
 
   public abstract equals(other: Maybe<A>): boolean;
+
+  public abstract get<B = A>(): B | undefined;
 
   public abstract get<B>(f: (a?: A) => B): B;
 }
@@ -37,7 +43,9 @@ export class Just<A> extends Maybe<A> {
     return this.x === other.x;
   }
 
-  public get<B>(f: (a?: A) => B = (_: any) => _): B {
+  public get<B>(): B | undefined;
+  public get<B>(f: (a?: A) => B): B;
+  public get<B>(f: (a?: A) => B = (_: any) => _): B | undefined {
     return f(this.x);
   }
 }
@@ -63,7 +71,9 @@ export class Nothing extends Maybe<any> {
     return other instanceof Nothing;
   }
 
-  public get<B>(f: (a?: any) => B): B {
+  public get<B>(): B | undefined;
+  public get<B>(f: (a?: any) => B): B;
+  public get<B>(f: (a?: any) => B = (_: any) => _): B | undefined {
     return f();
   }
 }

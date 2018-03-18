@@ -3,9 +3,9 @@ import Maybe from './Maybe';
 
 function getKey<T>(key: Key, obj: Indexable): Maybe<T> {
   if (typeof obj === 'undefined' || obj === null) {
-    return Maybe.new();
+    return Maybe.of();
   }
-  return Maybe.new(obj[key]);
+  return Maybe.of(obj[key]);
 }
 
 function getKeyCurry<T>(key: Key): (obj: Indexable) => Maybe<T> {
@@ -16,11 +16,11 @@ function getPath<T>(keys: Key[], obj: Indexable): Maybe<T> {
   let val: any = obj;
   for (const key of keys) {
     if (typeof val === 'undefined' || val === null) {
-      return Maybe.new();
+      return Maybe.of();
     }
     val = val[key];
   }
-  return Maybe.new(val);
+  return Maybe.of(val);
 }
 
 function getPathCurry<T>(keys: Array<string | number>): (obj: Indexable) => Maybe<T> {
