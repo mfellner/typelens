@@ -31,3 +31,7 @@ export interface Comparable {
 export interface Value<T> {
   value(): T;
 }
+
+export interface Gettable<A> {
+  get<B>(f: (a?: A) => B): B;
+}

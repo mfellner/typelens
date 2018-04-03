@@ -1,27 +1,27 @@
 /**
- * Test the fantasy-land specification on the Identity type.
+ * Test the fantasy-land specification on the identity type.
  * https://github.com/fantasyland/fantasy-land
  */
 
-import identity from '../src/Identity';
+import identity from '../src/identity';
 
-test('Identity equals', () => {
+test('identity equals', () => {
   expect(identity(42).equals(identity(42))).toBe(true);
   expect(identity(0).equals(identity(1))).toBe(false);
 });
 
-test('Identity value', () => {
+test('identity value', () => {
   expect(identity(42).value()).toEqual(42);
 });
 
-test('Identity Functor identity', () => {
+test('identity Functor identity', () => {
   const i = identity(42);
   const r = i.map(_ => _);
   expect(r.value()).toEqual(42);
   expect(r.equals(i)).toBe(true);
 });
 
-test('Identity Functor composition', () => {
+test('identity Functor composition', () => {
   const f = (_: number) => _ * _;
   const g = (_: number) => _ + 1;
   const i = identity(42);
@@ -31,7 +31,7 @@ test('Identity Functor composition', () => {
   expect(r.equals(s)).toBe(true);
 });
 
-test('Identity Apply composition', () => {
+test('identity Apply composition', () => {
   const v = identity(42);
   const u = identity((_: number) => _ * _);
   const a = identity((_: number) => _ + 1);
@@ -41,14 +41,14 @@ test('Identity Apply composition', () => {
   expect(r.equals(s)).toBe(true);
 });
 
-test('Identity Applicative identity', () => {
+test('identity Applicative identity', () => {
   const v = identity(42);
   const r = v.ap(identity((x: number) => x));
   expect(r.value()).toEqual(42);
   expect(r.equals(v)).toBe(true);
 });
 
-test('Identity Applicative homomorphism', () => {
+test('identity Applicative homomorphism', () => {
   const f = (_: number) => _ * _;
   const r = identity(42).ap(identity(f));
   const s = identity(f(42));
@@ -56,7 +56,7 @@ test('Identity Applicative homomorphism', () => {
   expect(r.equals(s)).toBe(true);
 });
 
-test('Identity Applicative interchange', () => {
+test('identity Applicative interchange', () => {
   const u = identity((_: number) => _ * _);
   const r = identity(42).ap(u);
   const s = u.ap(identity((f: (_: number) => number) => f(42)));
@@ -64,7 +64,7 @@ test('Identity Applicative interchange', () => {
   expect(r.equals(s)).toBe(true);
 });
 
-test('Identity Chain associativity', () => {
+test('identity Chain associativity', () => {
   const f = (_: number) => identity(_ * _);
   const g = (_: number) => identity(_ + 1);
   const m = identity(42);
@@ -74,7 +74,7 @@ test('Identity Chain associativity', () => {
   expect(r.equals(s)).toBe(true);
 });
 
-test('Identity Monad left identity', () => {
+test('identity Monad left identity', () => {
   const f = (_: number) => identity(_ * _);
   const r = identity(42).chain(f);
   const s = f(42);
@@ -82,7 +82,7 @@ test('Identity Monad left identity', () => {
   expect(r.equals(s)).toBe(true);
 });
 
-test('Identity Monad right identity', () => {
+test('identity Monad right identity', () => {
   const m = identity(42);
   const pure = <T>(_: T) => identity(_);
   const r = m.chain(pure);

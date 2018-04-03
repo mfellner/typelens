@@ -1,5 +1,5 @@
 import { Indexable } from './Indexable';
-import { Maybe } from './Maybe';
+import { Maybe } from './maybe';
 
 export interface Lens<T extends Indexable, A, B> {
   view(obj: T): Maybe<A>;

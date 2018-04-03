@@ -1,5 +1,5 @@
 import { Indexable, Key } from './Indexable';
-import maybe, { Maybe } from './Maybe';
+import maybe, { Maybe } from './maybe';
 
 function getKey<T>(key: Key, obj: Indexable): Maybe<T> {
   if (typeof obj === 'undefined' || obj === null) {
