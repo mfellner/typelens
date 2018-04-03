@@ -66,6 +66,8 @@
     },
     "testRegex": "/test/.*\\.test.ts$",
     "coverageReporters": [
+      "json",
+      "lcov",
       "text"
     ]
   }
