@@ -10,7 +10,7 @@ function setKey<T extends Indexable, V>(key: Key, val: V, obj: T): T {
 }
 
 function setKeyCurry<V>(key: Key): (val: V) => <T extends Indexable>(obj: T) => T {
-  return (val: any) => <T extends Indexable>(obj: T) => setKey(key, val, obj);
+  return (val: V) => <T extends Indexable>(obj: T) => setKey(key, val, obj);
 }
 
 function setPath<T extends Indexable, V>(keys: Key[], val: V, obj: T): T {
@@ -32,12 +32,12 @@ function setPath<T extends Indexable, V>(keys: Key[], val: V, obj: T): T {
 }
 
 function setPathCurry<V>(keys: Key[]): (val: V) => <T extends Indexable>(obj: T) => T {
-  return (val: any) => <T extends Indexable>(obj: T) => setPath(keys, val, obj);
+  return (val: V) => <T extends Indexable>(obj: T) => setPath(keys, val, obj);
 }
 
 export default function set<V = any>(
   key: Key | Key[]
-): (val: V) => <T extends Indexable>(obj: T) => Indexable {
+): (val: V) => <T extends Indexable>(obj: T) => T {
   if (Array.isArray(key)) {
     return setPathCurry(key);
   } else {
