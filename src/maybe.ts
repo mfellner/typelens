@@ -42,7 +42,7 @@ function nothing(): Maybe<any> {
   };
 }
 
-const NOTHING = Object.freeze(nothing());
+const NOTHING = nothing();
 
 export default function maybe<A>(x?: A): Maybe<A> {
   if (typeof x === 'undefined') {
