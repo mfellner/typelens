@@ -13,7 +13,7 @@ test('maybe from nothing', () => {
   expect(maybe().get()).toBeUndefined();
 });
 
-// something *********************************************************************
+// something *******************************************************************
 
 test('something Functor identity', () => {
   const i = maybe(42);
@@ -165,4 +165,32 @@ test('nothing Monad right identity', () => {
   const pure = <T>(_: T) => maybe(_);
   const r = m.chain(pure);
   expect(r.equals(m)).toBe(true);
+});
+
+// ResolvableMaybe *************************************************************
+
+test('ResolvableMaybe getString', () => {
+  expect(maybe(42).getString()).toEqual('42');
+});
+
+test('ResolvableMaybe getNumber', () => {
+  expect(maybe('42').getNumber()).toEqual(42);
+});
+
+test('ResolvableMaybe getObject', () => {
+  expect(maybe('{}').getObject()).toEqual({});
+});
+
+test('ResolvableMaybe getBool', () => {
+  expect(maybe('false').getBool()).toEqual(false);
+});
+
+test('ResolvableMaybe getFunction', () => {
+  const fn = () => 42;
+  expect(maybe(fn).getFunction()!()).toEqual(42);
+});
+
+test('ResolvableMaybe getSymbol', () => {
+  const s = Symbol();
+  expect(maybe(s).getSymbol()).toEqual(s);
 });
