@@ -1,7 +1,5 @@
 import TypeError from './TypeError';
 
-export type Supplier = <T>(f: (a?: any) => T) => T;
-
 function toStringFn<T extends string | undefined>(x: any, fallback?: T): T | string {
   if (typeof x === 'string') {
     return x;
@@ -19,8 +17,8 @@ function toStringFn<T extends string | undefined>(x: any, fallback?: T): T | str
   }
 }
 
-export function toString(get: Supplier) {
-  return <T extends string | undefined>(fallback?: T) => get(x => toStringFn(x, fallback));
+export function toString(x: any) {
+  return (fallback?: string | undefined) => toStringFn(x, fallback);
 }
 
 function toNumberFn<T extends number | undefined>(x: any, fallback?: T): T | number {
@@ -41,8 +39,8 @@ function toNumberFn<T extends number | undefined>(x: any, fallback?: T): T | num
   }
 }
 
-export function toNumber(get: Supplier) {
-  return <T extends number | undefined>(fallback?: T) => get(x => toNumberFn(x, fallback));
+export function toNumber(x: any) {
+  return (fallback?: number | undefined) => toNumberFn(x, fallback);
 }
 
 function toObjectFn<T extends object | undefined>(x: any, fallback?: T): T | object {
@@ -68,8 +66,35 @@ function toObjectFn<T extends object | undefined>(x: any, fallback?: T): T | obj
   throw new TypeError(`Not an object: ${x}`);
 }
 
-export function toObject(get: Supplier) {
-  return <T extends object | undefined>(fallback?: T) => get(x => toObjectFn(x, fallback));
+export function toObject(x: any) {
+  return (fallback?: object | undefined) => toObjectFn(x, fallback);
+}
+
+function toArrayFn<T extends any[] | undefined>(x: any, fallback?: T): T | any[] {
+  if (Array.isArray(x)) {
+    return x;
+  }
+  if (typeof x === 'undefined' && Array.isArray(fallback)) {
+    return fallback;
+  }
+  if (typeof x === 'undefined') {
+    return undefined as T;
+  }
+  if (typeof x === 'string') {
+    try {
+      const o = JSON.parse(x);
+      if (Array.isArray(o)) {
+        return o;
+      }
+    } catch {
+      // do nothing
+    }
+  }
+  throw new TypeError(`Not an array: ${x}`);
+}
+
+export function toArray(x: any) {
+  return (fallback?: any[] | undefined) => toArrayFn(x, fallback);
 }
 
 function toBoolFn<T extends boolean | undefined>(x: any, fallback?: T): T | boolean {
@@ -88,8 +113,8 @@ function toBoolFn<T extends boolean | undefined>(x: any, fallback?: T): T | bool
   return !!x;
 }
 
-export function toBool(get: Supplier) {
-  return <T extends boolean | undefined>(fallback?: T) => get(x => toBoolFn(x, fallback));
+export function toBool(x: any) {
+  return (fallback?: boolean | undefined) => toBoolFn(x, fallback);
 }
 
 function toFunctionFn<T extends Function | undefined>(x: any, fallback?: T): T | Function {
@@ -105,8 +130,8 @@ function toFunctionFn<T extends Function | undefined>(x: any, fallback?: T): T |
   throw new TypeError(`Not a function: ${x}`);
 }
 
-export function toFunction(get: Supplier) {
-  return <T extends Function | undefined>(fallback?: T) => get(x => toFunctionFn(x, fallback));
+export function toFunction(x: any) {
+  return (fallback?: Function | undefined) => toFunctionFn(x, fallback);
 }
 
 function toSymbolFn<T extends Symbol | undefined>(x: any, fallback?: T): T | Symbol {
@@ -125,6 +150,6 @@ function toSymbolFn<T extends Symbol | undefined>(x: any, fallback?: T): T | Sym
   throw new TypeError(`Not a symbol: ${x}`);
 }
 
-export function toSymbol(get: Supplier) {
-  return <T extends Symbol | undefined>(fallback?: T) => get(x => toSymbolFn(x, fallback));
+export function toSymbol(x: any) {
+  return (fallback?: Symbol | undefined) => toSymbolFn(x, fallback);
 }
